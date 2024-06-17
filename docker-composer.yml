@@ -1,0 +1,40 @@
+services:
+  postgresql:
+    container_name: http_client_postgresql
+    image: postgres
+    secrets:
+      - postgres_user
+      - postgres_password
+    environment:
+      - POSTGRES_USER_FILE=/run/secrets/postgres_user
+      - POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - http-client-net
+    restart: unless-stopped
+
+  zipkin:
+    container_name: http_client_zipkin
+    image: openzipkin/zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - http-client-net
+
+networks:
+  http-client-net:
+    driver: bridge
+
+volumes:
+  postgres:
+
+secrets:
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
