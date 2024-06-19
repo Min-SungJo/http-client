@@ -14,11 +14,9 @@ public class RestClientClient {
 
     @Value("${application.config.student-url}")
     private String studentUrl;
-    private final RestClient.Builder restClientBuilder;
+    private final RestClient restClient;
 
     public List<Student> findAllStudentsBySchool(Integer schoolId) {
-
-        RestClient restClient = restClientBuilder.build();
 
         try {
             return restClient.get()
